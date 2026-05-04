@@ -1,96 +1,113 @@
-const STORAGE_KEY = 'my_note';
+const STORAGE_KEY = 'notes_list';
+let notes = [];
 
-// ========== РАБОТА С ЗАМЕТКАМИ ==========
-
-function updateSavedNoteDisplay() {
-    const savedNote = localStorage.getItem(STORAGE_KEY);
-    const savedNoteDiv = document.getElementById('savedNote');
-    if (savedNote && savedNote.trim() !== '') {
-        savedNoteDiv.textContent = savedNote;
-    } else {
-        savedNoteDiv.textContent = '';
-    }
+function loadNotes() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    notes = saved ? JSON.parse(saved) : [];
+    renderNotes();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const savedNote = localStorage.getItem(STORAGE_KEY);
-    const textarea = document.getElementById('noteContent');
-    const statusDiv = document.getElementById('status');
-    
-    if (savedNote !== null) {
-        textarea.value = savedNote;
-        statusDiv.textContent = 'заметка восстановлена';
-    } else {
-        statusDiv.textContent = 'нет сохранённой заметки';
+function saveNotes() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    renderNotes();
+}
+
+function renderNotes() {
+    const container = document.getElementById('notesList');
+    if (!container) return;
+    if (notes.length === 0) {
+        container.innerHTML = '<div class="empty-message">нет заметок</div>';
+        return;
     }
-    
-    updateSavedNoteDisplay();
-});
-
-document.getElementById('saveBtn').addEventListener('click', () => {
-    const textarea = document.getElementById('noteContent');
-    const noteText = textarea.value;
-    const statusDiv = document.getElementById('status');
-    
-    localStorage.setItem(STORAGE_KEY, noteText);
-    statusDiv.textContent = 'сохранено!';
-    updateSavedNoteDisplay();
-    
-    setTimeout(() => {
-        if (statusDiv.textContent === 'сохранено!') {
-            statusDiv.textContent = 'заметка сохранена';
-        }
-    }, 1500);
-});
-
-document.getElementById('clearBtn').addEventListener('click', () => {
-    const textarea = document.getElementById('noteContent');
-    const statusDiv = document.getElementById('status');
-    
-    localStorage.removeItem(STORAGE_KEY);
-    textarea.value = '';
-    statusDiv.textContent = 'заметка удалена, поле очищено';
-    updateSavedNoteDisplay();
-});
-
-// ========== PWA: SERVICE WORKER ==========
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('Service Worker зарегистрирован:', registration.scope);
-                const statusDiv = document.getElementById('status');
-                if (statusDiv) {
-                    statusDiv.textContent = '✓ Service Worker работает | ' + statusDiv.textContent;
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка регистрации SW:', error);
-            });
+    container.innerHTML = '';
+    notes.forEach((note, i) => {
+        const div = document.createElement('div');
+        div.className = 'note-item';
+        div.innerHTML = `
+            <span class="note-text">${escapeHtml(note)}</span>
+            <button class="delete-note" data-index="${i}">×</button>
+        `;
+        container.appendChild(div);
+    });
+    document.querySelectorAll('.delete-note').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const idx = parseInt(btn.dataset.index);
+            notes.splice(idx, 1);
+            saveNotes();
+            showStatus('заметка удалена');
+        });
     });
 }
 
-// ========== PWA: КНОПКА УСТАНОВКИ ==========
+function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    }).replace(/[\n\r]/g, '<br>');
+}
 
+function addNote() {
+    const textarea = document.getElementById('noteInput');
+    const text = textarea.value.trim();
+    if (text === '') {
+        showStatus('пустая заметка не добавлена');
+        return;
+    }
+    notes.push(text);
+    saveNotes();
+    textarea.value = '';
+    showStatus('заметка добавлена');
+}
+
+function clearAllNotes() {
+    if (notes.length === 0) return;
+    notes = [];
+    saveNotes();
+    showStatus('все заметки удалены');
+}
+
+function showStatus(msg) {
+    const statusDiv = document.getElementById('status');
+    if (!statusDiv) return;
+    statusDiv.textContent = msg;
+    setTimeout(() => statusDiv.textContent = '', 1500);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadNotes();
+    document.getElementById('addBtn').addEventListener('click', addNote);
+    document.getElementById('clearAllBtn').addEventListener('click', clearAllNotes);
+    const textarea = document.getElementById('noteInput');
+    if (textarea) {
+        textarea.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                addNote();
+            }
+        });
+    }
+});
+
+// PWA (Service Worker)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+    });
+}
+
+// кнопка установки
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
-
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    if (installBtn) installBtn.style.display = 'block';
-    
-    if (installBtn) {
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                const statusDiv = document.getElementById('status');
-                if (statusDiv) statusDiv.textContent = '✓ Приложение установлено | ' + statusDiv.textContent;
-            }
-            deferredPrompt = null;
-        });
-    }
+    installBtn.style.display = 'inline-block';
+});
+installBtn?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    installBtn.style.display = 'none';
+    deferredPrompt.prompt();
+    deferredPrompt = null;
 });

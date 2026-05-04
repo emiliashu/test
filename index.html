@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Заметки PWA</title>
+    <title>Заметки</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -11,17 +11,18 @@
 </head>
 <body>
     <div class="container">
-        <h1>Заметки</h1>
-        <textarea id="noteContent" rows="6" placeholder="ваша заметка..."></textarea>
+        <h1 class="title">Заметки</h1>
+
+        <textarea id="noteInput" rows="3" placeholder="новая заметка..."></textarea>
         
         <div class="buttons">
-            <button id="saveBtn">сохранить</button>
-            <button id="clearBtn">очистить</button>
+            <button id="addBtn">добавить</button>
+            <button id="clearAllBtn">очистить всё</button>
             <button id="installBtn" style="display: none;">установить</button>
         </div>
-        
+
+        <div class="notes-list" id="notesList"></div>
         <div class="status" id="status"></div>
-        <div class="saved-note" id="savedNote"></div>
     </div>
     <script src="app.js"></script>
 </body>

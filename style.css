@@ -17,10 +17,13 @@ body {
     max-width: 90vw;
 }
 
-h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+/* заголовок — в углу, без отступов вверх */
+.title {
+    font-size: 18px;
     font-weight: normal;
+    margin-bottom: 12px;
+    color: black;
+    font-family: 'Courier New', monospace;
 }
 
 textarea {
@@ -68,26 +71,58 @@ button:hover {
     color: #555;
 }
 
-.saved-note {
+.notes-list {
     margin-top: 15px;
+}
+
+.note-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
     padding: 10px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    border-top: 1px solid #ccc;
-    color: black;
+    margin-bottom: 8px;
+    border: 1px solid black;
     background: white;
+    width: 100%;
+}
+
+.note-text {
+    flex: 1;
     white-space: pre-wrap;
     word-wrap: break-word;
+    line-height: 1.4;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: black;
 }
 
-.saved-note:empty {
-    display: none;
+.delete-note {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid black;
+    font-size: 16px;
+    cursor: pointer;
+    color: black;
+    font-family: 'Courier New', monospace;
+    padding: 0;
+    line-height: 1;
 }
 
-.saved-note::before {
-    content: "сохранённая заметка:";
-    display: block;
-    font-size: 10px;
+.delete-note:hover {
+    background: black;
+    color: white;
+}
+
+.empty-message {
     color: #555;
-    margin-bottom: 5px;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+    border: 1px dashed #ccc;
 }
