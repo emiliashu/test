@@ -1,0 +1,93 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: white;
+    font-family: 'Courier New', monospace;
+}
+
+.container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 400px;
+    max-width: 90vw;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: normal;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    border: 1px solid black;
+    background: white;
+    resize: vertical;
+    color: black;
+}
+
+textarea:focus {
+    outline: none;
+    border: 2px solid black;
+}
+
+.buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 6px 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    background: white;
+    border: 1px solid black;
+    cursor: pointer;
+    color: black;
+}
+
+button:hover {
+    background: black;
+    color: white;
+}
+
+.status {
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #555;
+}
+
+.saved-note {
+    margin-top: 15px;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    border-top: 1px solid #ccc;
+    color: black;
+    background: white;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.saved-note:empty {
+    display: none;
+}
+
+.saved-note::before {
+    content: "сохранённая заметка:";
+    display: block;
+    font-size: 10px;
+    color: #555;
+    margin-bottom: 5px;
+}

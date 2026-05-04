@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заметки PWA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#000000">
+</head>
+<body>
+    <div class="container">
+        <h1>Заметки</h1>
+        <textarea id="noteContent" rows="6" placeholder="ваша заметка..."></textarea>
+        
+        <div class="buttons">
+            <button id="saveBtn">сохранить</button>
+            <button id="clearBtn">очистить</button>
+            <button id="installBtn" style="display: none;">установить</button>
+        </div>
+        
+        <div class="status" id="status"></div>
+        <div class="saved-note" id="savedNote"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
